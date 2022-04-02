@@ -6,11 +6,8 @@ using UnityEngine;
 public class Attractor : MonoBehaviour {
 
     const float G = 667.4f;
-
-    public static List<Attractor> Attractors;
-
-    protected Rigidbody rb;
-
+    protected static List<Attractor> Attractors;
+    private Rigidbody rb;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -28,7 +25,8 @@ public class Attractor : MonoBehaviour {
 
         float forceMagnitude = G * (rb.mass * rbToAttract.mass) / Mathf.Pow(distance, 2);
         Vector3 force = direction.normalized * forceMagnitude;
-
         rbToAttract.AddForce(force);
     }
+
+
 }

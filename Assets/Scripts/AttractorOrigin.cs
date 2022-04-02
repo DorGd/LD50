@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class AttractorOrigin : Attractor
 {
+    private int updateInterval = 10;
+    private int updatedCount = 0;
+    
     void FixedUpdate ()
     {
-        foreach (Attractor attractor in Attractors)
+        if (updatedCount % updateInterval == 0)
         {
-            if (attractor != this)
-                Attract(attractor);
+            foreach (Attractor attractor in Attractors)
+            {
+                if (attractor != this)
+                    Attract(attractor);
+            }
         }
+        updatedCount++;
     }
 }
