@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
 
-[RequireComponent(typeof(SphereCollider), typeof(Rigidbody))]
+[RequireComponent(typeof(SphereCollider))]
 public class BlackHole : MonoBehaviour
 {
     private Action<Collider> BlackHoldEat;
+    
+    [SerializeField]
     private Rigidbody rb;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
         BlackHoldEat += OnBlackHoleEats;
     }
 
@@ -23,9 +24,14 @@ public class BlackHole : MonoBehaviour
 
     void OnBlackHoleEats(Collider food)
     {
+        AbsorbFood(food);
+    }
+
+    private void AbsorbFood(Collider food)
+    {
         float foodMass = food.attachedRigidbody.mass;
         Destroy(food.gameObject);
         rb.mass += foodMass;
+        transform.localScale += Vector3.one * foodMass;
     }
-
 }
