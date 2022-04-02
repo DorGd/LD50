@@ -31,7 +31,7 @@ public class BlackHole : MonoBehaviour
     {
         float foodMass = food.attachedRigidbody.mass;
         Destroy(food.gameObject);
-        rb.mass += foodMass;
+        rb.mass += foodMass * 10;
         transform.localScale += Vector3.one * foodMass;
     }
 }
