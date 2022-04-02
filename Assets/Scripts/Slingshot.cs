@@ -42,7 +42,7 @@ public class Slingshot : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
         
             if (Physics.Raycast(ray, out hit)) {
                 _selectedRigidBody = hit.rigidbody;
