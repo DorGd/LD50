@@ -5,9 +5,6 @@ using UnityEngine.EventSystems;
 
 public class Slingshot : MonoBehaviour
 {
-
-    public LineRenderer lineRenderer;
-
     public int multiplier;
     
     private Vector3 _originPosition;
@@ -27,10 +24,10 @@ public class Slingshot : MonoBehaviour
 
     float AngleBetweenTwoPoints() {
         //Get the Screen positions of the object
-        Vector2 positionOnScreen = _selectedRigidBody.position /*_camera.WorldToViewportPoint (transform.position)*/;
+        Vector2 positionOnScreen = _selectedRigidBody.position;
          
         //Get the Screen position of the mouse
-        Vector2 mouseOnScreen = _currentPosition/*_camera.ScreenToViewportPoint(Input.mousePosition)*/;
+        Vector2 mouseOnScreen = _currentPosition;
         
         return Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg;
     }
@@ -49,8 +46,7 @@ public class Slingshot : MonoBehaviour
                 _originPosition = hit.transform.position;
                 _isPressed = true;
             }
-            
-    
+
         }
         
         if (_isPressed && Input.GetButton("Fire1"))
@@ -60,14 +56,12 @@ public class Slingshot : MonoBehaviour
             
             transform.rotation =  Quaternion.Euler (new Vector3(0f,0f,AngleBetweenTwoPoints()));
             
-            // lineRenderer.SetPosition(1, direction);
             Debug.DrawLine(_originPosition, _originPosition + direction, Color.magenta);
         }
         
         if (_isPressed && Input.GetButtonUp("Fire1"))
         {
             _isPressed = false;
-    
             SlingHumanToSpace();
         }
     }
@@ -77,4 +71,5 @@ public class Slingshot : MonoBehaviour
         var direction = (_currentPosition - _originPosition) * multiplier;
         _selectedRigidBody.AddForce(-direction);
     }
+    
 }
