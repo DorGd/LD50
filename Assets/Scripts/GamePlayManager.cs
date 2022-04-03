@@ -50,8 +50,6 @@ public static class GamePlayManager
             case GameState.Exit:
                 OnExit();
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
         OnGameStateChange?.Invoke(_gameData);
         Debug.Log($"Chane Game State to: {state}");

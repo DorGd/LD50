@@ -7,7 +7,7 @@ public class Attractor : MonoBehaviour {
 
     const float G = 667.4f;
     protected static List<Attractor> Attractors;
-    private Rigidbody rb;
+    protected Rigidbody rb;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
