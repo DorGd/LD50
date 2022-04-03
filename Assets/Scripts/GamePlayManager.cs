@@ -19,8 +19,7 @@ public static class GamePlayManager
     
     private static GamePlayData _gameData;
     private static GameObject _human;
-    private static GameObject _blackHole;
-    
+
     public static void ChangeGameState(GameState state)
     {
         if (_gameData != null && _gameData.State == state)
@@ -67,6 +66,10 @@ public static class GamePlayManager
         }
 
         _gameData.State = GameState.Init;
+        _gameData.PlanetIndex = 0;
+        _gameData.BlackHole = GameObject.Find("BlackHole");
+        _gameData.CurrentPlanet = GameObject.Find($"Planet_{_gameData.PlanetIndex}");
+        _gameData.BlackHoleMass = _gameData.BlackHole.GetComponentInChildren<Rigidbody>().mass;
     }
     
     static void OnPlay()
@@ -81,7 +84,8 @@ public static class GamePlayManager
     
     static void OnLevelTransition()
     {
-        throw new NotImplementedException();
+        _gameData.PlanetIndex++;
+        _gameData.CurrentPlanet = GameObject.Find($"Planet_{_gameData.PlanetIndex}");
     }
     
     static void OnLose()

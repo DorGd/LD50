@@ -8,4 +8,7 @@ public class GamePlayData : ScriptableObject
     public GameState State;
     public int LiveHumens;
     public float BlackHoleMass;
+    public int PlanetIndex = 0;
+    public GameObject BlackHole;
+    public GameObject CurrentPlanet;
 }

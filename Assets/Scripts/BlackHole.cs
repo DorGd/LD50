@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
 public class BlackHole : MonoBehaviour
 {
-    private Action<Collider> BlackHoldEat;
+    private Action<Collider> _blackHoleEat;
     private GamePlayData _gameData;
     
     [SerializeField]
@@ -16,7 +13,7 @@ public class BlackHole : MonoBehaviour
 
     private void Awake()
     {
-        BlackHoldEat += OnBlackHoleEats;
+        _blackHoleEat += OnBlackHoleEats;
         _gameData = AssetDatabase.LoadAssetAtPath<GamePlayData>("Assets/ScriptableObjects/GameData.asset");
         if (_gameData == null)
         {
@@ -26,7 +23,7 @@ public class BlackHole : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        BlackHoldEat.Invoke(other);
+        _blackHoleEat.Invoke(other);
     }
 
     void OnBlackHoleEats(Collider food)
