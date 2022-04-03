@@ -1,12 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
 using UnityEditor;
 using UnityEngine;
 
 public enum GameState
 {
+    Undefined,
     Init,
     Play,
     Pause,
@@ -17,20 +15,18 @@ public enum GameState
 }
 public static class GamePlayManager
 {
-    public static event Action<GameState> ChangeGameState;
+    public static event Action<GameState> OnGameStateChange;
     
-    private static GameState CurrentState;
-
-    private static GamePlayData GameData;
+    private static GamePlayData _gameData;
+    private static GameObject _human;
+    private static GameObject _blackHole;
     
-    public static void OnGameStateChange(GameState state)
+    public static void ChangeGameState(GameState state)
     {
-        if (CurrentState == state)
+        if (_gameData != null && _gameData.State == state)
         {
             return;
         }
-
-        CurrentState = state;
 
         switch (state)
         {
@@ -58,15 +54,19 @@ public static class GamePlayManager
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
+        OnGameStateChange?.Invoke(state);
     }
 
     static void OnInit()
     {
-        GameData = AssetDatabase.LoadAssetAtPath<GamePlayData>("Assets/Scripts");
-        if (GameData == null)
+        _gameData = AssetDatabase.LoadAssetAtPath<GamePlayData>("Assets/ScriptableObjects/GameData.asset");
+        if (_gameData == null)
         {
             Debug.LogError("Can't find GameData, please check path is correct.");
+            return;
         }
+
+        _gameData.State = GameState.Init;
     }
     
     static void OnPlay()
