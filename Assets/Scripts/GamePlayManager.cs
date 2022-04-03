@@ -13,14 +13,18 @@ public enum GameState
     Win,
     Exit
 }
+
 public static class GamePlayManager
 {
     public static event Action<GamePlayData> OnGameStateChange;
+    public static event Action<GamePlayData> OnHumanEnteredSafePlanet;
+    public static event Action<Collider, GamePlayData> OnBlackHoleEats;
     
     private static GamePlayData _gameData;
     private static GameObject _human;
+    private const int HumanityInitSize = 1;
 
-    public static void ChangeGameState(GameState state)
+    public static void ChangeGameState(GameState state, Action onComplete = null)
     {
         if (_gameData != null && _gameData.State == state)
         {
@@ -51,8 +55,10 @@ public static class GamePlayManager
                 OnExit();
                 break;
         }
+        _gameData.Print();
         OnGameStateChange?.Invoke(_gameData);
         Debug.Log($"Chane Game State to: {state}");
+        onComplete?.Invoke();
     }
 
     static void OnInit()
@@ -67,39 +73,73 @@ public static class GamePlayManager
         _gameData.State = GameState.Init;
         _gameData.PlanetIndex = 0;
         _gameData.BlackHole = GameObject.Find("BlackHole");
-        _gameData.CurrentPlanet = GameObject.Find("Planet_0");
         _gameData.BlackHoleMass = _gameData.BlackHole.GetComponentInChildren<Rigidbody>().mass;
+        _gameData.LiveHumens = HumanityInitSize;
+        _gameData.SafeHumans = 0;
     }
     
     static void OnPlay()
     {
-        throw new NotImplementedException();
+        _gameData.State = GameState.Play;
     }
     
     static void OnPause()
     {
-        throw new NotImplementedException();
+        _gameData.State = GameState.Pause;
     }
     
     static void OnLevelTransition()
     {
         _gameData.State = GameState.LevelTransition;
+        _gameData.SafeHumans = 0;
         _gameData.PlanetIndex++;
-        _gameData.CurrentPlanet = GameObject.Find($"Planet_{_gameData.PlanetIndex}");
     }
     
     static void OnLose()
     {
-        throw new NotImplementedException();
+        _gameData.State = GameState.Lose;
     }
     
     static void OnWin()
     {
-        throw new NotImplementedException();
+        _gameData.State = GameState.Win;
     }
     
     static void OnExit()
     {
-        throw new NotImplementedException();
+        _gameData.State = GameState.Exit;
+    }
+
+    public static void HumanEnteredSafePlanet()
+    {
+        _gameData.SafeHumans++;
+        OnHumanEnteredSafePlanet?.Invoke(_gameData);
+        CheckHumanitySafe();
+    }
+    
+    public static void BlackHoleEats(Collider food)
+    {
+        if (food.gameObject.layer == LayerMask.NameToLayer("Human"))
+        {
+            _gameData.LiveHumens--;
+        }
+        OnBlackHoleEats?.Invoke(food, _gameData);
+        CheckHumanityDoomed();
+    }
+
+    private static void CheckHumanityDoomed()
+    {
+        if (_gameData.LiveHumens == 0)
+        {
+            ChangeGameState(GameState.Lose);
+        }
+    }
+
+    private static void CheckHumanitySafe()
+    {
+        if (_gameData.LiveHumens == _gameData.SafeHumans)
+        {
+            ChangeGameState(GameState.LevelTransition);
+        }
     }
 }

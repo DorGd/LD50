@@ -10,5 +10,10 @@ public class GamePlayData : ScriptableObject
     public float BlackHoleMass;
     public int PlanetIndex = 0;
     public GameObject BlackHole;
-    public GameObject CurrentPlanet;
+    public int SafeHumans = 0;
+
+    public void Print()
+    {
+        Debug.Log($"State: {State}, Lives: {LiveHumens}, Safe: {SafeHumans}, BH mass: {BlackHoleMass}, Planet Idx: {PlanetIndex}");
+    }
 }

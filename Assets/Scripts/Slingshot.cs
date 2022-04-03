@@ -40,7 +40,7 @@ public class Slingshot : MonoBehaviour
         {
             RaycastHit hit;
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-        
+            
             if (Physics.Raycast(ray, out hit)) {
                 _selectedRigidBody = hit.rigidbody;
                 _originPosition = hit.transform.position;

@@ -5,38 +5,32 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class BlackHole : MonoBehaviour
 {
-    private Action<Collider> _blackHoleEat;
-    private GamePlayData _gameData;
     
     [SerializeField]
     private Rigidbody rb;
 
     private void Awake()
     {
-        _blackHoleEat += OnBlackHoleEats;
-        _gameData = AssetDatabase.LoadAssetAtPath<GamePlayData>("Assets/ScriptableObjects/GameData.asset");
-        if (_gameData == null)
-        {
-            Debug.LogError("BlackHole can't find GameData, please check path is correct.");
-        }
+        GamePlayManager.OnBlackHoleEats += OnBlackHoleEats;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        _blackHoleEat.Invoke(other);
+        GamePlayManager.BlackHoleEats(other);
     }
 
-    void OnBlackHoleEats(Collider food)
+    void OnBlackHoleEats(Collider food, GamePlayData data)
     {
-        AbsorbFood(food);
+        Debug.Log($"Black Hole eats {food.transform.parent.name}");
+        AbsorbFood(food, data);
     }
 
-    private void AbsorbFood(Collider food)
+    private void AbsorbFood(Collider food, GamePlayData data)
     {
         float foodMass = food.attachedRigidbody.mass;
-        Destroy(food.gameObject);
         rb.mass += foodMass * 10;
         transform.localScale += Vector3.one * foodMass;
-        _gameData.BlackHoleMass = rb.mass;
+        data.BlackHoleMass = rb.mass;
+        Destroy(food.gameObject);
     }
 }

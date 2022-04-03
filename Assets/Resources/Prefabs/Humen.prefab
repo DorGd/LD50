@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 1372130468715584069}
   - component: {fileID: 1372130468715584070}
   - component: {fileID: 1372130468715584071}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Phsyx
   m_TagString: Untagged
   m_Icon: {fileID: 0}

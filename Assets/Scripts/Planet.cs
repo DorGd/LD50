@@ -13,9 +13,6 @@ public class Planet : MonoBehaviour
     [SerializeField] private int _planetIndex;
     
     private Rigidbody _rb;
-
-    private GamePlayData _gameData;
-
     private void Awake()
     {
         GamePlayManager.OnGameStateChange += OnGameStateChange;
@@ -25,6 +22,13 @@ public class Planet : MonoBehaviour
         {
             Debug.LogError($"{gameObject.name} can't find rigid body!");
         }
+    }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.GetComponent<AttractorTarget>() || other.isTrigger) return;
+        Debug.Log("HumanEnteredSafePlanet -> " + gameObject.name);
+        GamePlayManager.HumanEnteredSafePlanet();
     }
 
     private void OnGameStateChange(GamePlayData data)
@@ -36,11 +40,13 @@ public class Planet : MonoBehaviour
                 {
                     _rb.WakeUp();
                     gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
+                    GetComponent<Collider>().enabled = false;
                 }
                 else if (_planetIndex - data.PlanetIndex == 1)
                 {
                     _rb.WakeUp();
                     gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
+                    GetComponent<Collider>().enabled = true;
                 }
                 else
                 {
@@ -55,14 +61,17 @@ public class Planet : MonoBehaviour
             case GameState.LevelTransition:
                 if (_planetIndex == data.PlanetIndex)
                 {
-                    gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
+                    gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f).onComplete += (() => GamePlayManager.ChangeGameState(GameState.Play));
+                    GetComponent<Collider>().enabled = false;
                 }
                 else if (_planetIndex - data.PlanetIndex == 1)
                 {
                     _rb.WakeUp();
                     gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
+                    GetComponent<Collider>().enabled = true;
+
                 }
-                else
+                else if (_planetIndex - data.PlanetIndex == -1)
                 {
                     // For debug
                     gameObject.transform.DOMove(_BlackHoleAnchore.position, 3f).SetEase(Ease.OutBounce).onComplete += () => Destroy(gameObject);
