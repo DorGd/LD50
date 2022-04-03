@@ -15,7 +15,7 @@ public enum GameState
 }
 public static class GamePlayManager
 {
-    public static event Action<GameState> OnGameStateChange;
+    public static event Action<GamePlayData> OnGameStateChange;
     
     private static GamePlayData _gameData;
     private static GameObject _human;
@@ -53,7 +53,8 @@ public static class GamePlayManager
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
-        OnGameStateChange?.Invoke(state);
+        OnGameStateChange?.Invoke(_gameData);
+        Debug.Log($"Chane Game State to: {state}");
     }
 
     static void OnInit()
@@ -68,7 +69,7 @@ public static class GamePlayManager
         _gameData.State = GameState.Init;
         _gameData.PlanetIndex = 0;
         _gameData.BlackHole = GameObject.Find("BlackHole");
-        _gameData.CurrentPlanet = GameObject.Find($"Planet_{_gameData.PlanetIndex}");
+        _gameData.CurrentPlanet = GameObject.Find("Planet_0");
         _gameData.BlackHoleMass = _gameData.BlackHole.GetComponentInChildren<Rigidbody>().mass;
     }
     
@@ -84,6 +85,7 @@ public static class GamePlayManager
     
     static void OnLevelTransition()
     {
+        _gameData.State = GameState.LevelTransition;
         _gameData.PlanetIndex++;
         _gameData.CurrentPlanet = GameObject.Find($"Planet_{_gameData.PlanetIndex}");
     }

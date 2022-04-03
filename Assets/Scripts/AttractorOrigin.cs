@@ -11,6 +11,7 @@ public class AttractorOrigin : Attractor
     {
         if (updatedCount % updateInterval == 0)
         {
+            // Make sure there are humans in scene!
             foreach (Attractor attractor in Attractors)
             {
                 if (attractor != this)
