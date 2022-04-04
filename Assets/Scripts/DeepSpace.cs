@@ -7,9 +7,10 @@ public class DeepSpace : MonoBehaviour
 {
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Human"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Human") && !other.isTrigger)
         {
             GamePlayManager.HumanFallToDeepSpace();
+            Destroy(other.gameObject);
         }
     }
 }
