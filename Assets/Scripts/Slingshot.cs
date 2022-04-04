@@ -22,11 +22,10 @@ public class Slingshot : MonoBehaviour
         _camera = Camera.main;
     }
 
-    float AngleBetweenTwoPoints() {
-        //Get the Screen positions of the object
+    private float AngleBetweenTwoPoints()
+    {
         Vector2 positionOnScreen = _selectedRigidBody.position;
-         
-        //Get the Screen position of the mouse
+        
         Vector2 mouseOnScreen = _currentPosition;
         
         return Mathf.Atan2(positionOnScreen.y - mouseOnScreen.y, positionOnScreen.x - mouseOnScreen.x) * Mathf.Rad2Deg;
@@ -38,20 +37,27 @@ public class Slingshot : MonoBehaviour
     
         if (Input.GetButtonDown("Fire1"))
         {
-            RaycastHit hit;
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            // transform.position = mousePos;
+
+            Debug.Log(mousePos);
             
-            if (Physics.Raycast(ray, out hit)) {
+            Ray ray = _camera.ScreenPointToRay(mousePos);
+        
+            if (Physics.Raycast(ray, out var hit))
+            {
                 _selectedRigidBody = hit.rigidbody;
+                
                 _originPosition = hit.transform.position;
+
+                transform.position = _originPosition;
+                
                 _isPressed = true;
             }
-
         }
         
         if (_isPressed && Input.GetButton("Fire1"))
         {
-            _currentPosition = _camera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y,Mathf.Abs(_camera.transform.position.z - _selectedRigidBody.position.z)));
+            _currentPosition = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y,Mathf.Abs(_camera.transform.position.z - _selectedRigidBody.position.z)));
             var direction = _currentPosition - _originPosition;
             
             transform.rotation =  Quaternion.Euler (new Vector3(0f,0f,AngleBetweenTwoPoints()));
@@ -69,7 +75,7 @@ public class Slingshot : MonoBehaviour
     private void SlingHumanToSpace()
     {
         var direction = (_currentPosition - _originPosition) * multiplier;
+        
         _selectedRigidBody.AddForce(-direction);
     }
-    
 }
