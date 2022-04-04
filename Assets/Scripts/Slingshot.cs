@@ -37,10 +37,6 @@ public class Slingshot : MonoBehaviour
     
         if (Input.GetButtonDown("Fire1"))
         {
-            // transform.position = mousePos;
-
-            Debug.Log(mousePos);
-            
             Ray ray = _camera.ScreenPointToRay(mousePos);
         
             if (Physics.Raycast(ray, out var hit))

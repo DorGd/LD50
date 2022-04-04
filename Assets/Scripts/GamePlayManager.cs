@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Object = System.Object;
 
 public enum GameState
 {
@@ -70,7 +71,15 @@ public static class GamePlayManager
             Debug.LogError("Can't find GameData, please check path is correct.");
             return;
         }
-
+        
+        var planet = GameObject.Find("Planet_0");
+        var human = Resources.Load<GameObject>("Prefabs/Human");
+        for (int i = 1; i < HumanityInitSize; i++)
+        {
+            var position = planet.transform.position + Quaternion.AngleAxis( Mathf.Rad2Deg * 2 * Mathf.PI * (i / 10f), Vector3.forward) * Vector3.up * (planet.transform.localScale.x + human.transform.localScale.x);
+            UnityEngine.Object.Instantiate(human, position, Quaternion.identity);
+        }
+        
         _gameData.State = GameState.Init;
         _gameData.PlanetIndex = 0;
         _gameData.BlackHole = GameObject.Find("BlackHole");

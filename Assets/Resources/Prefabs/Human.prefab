@@ -183,7 +183,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1372130468828008669}
   m_Layer: 0
-  m_Name: Humen
+  m_Name: Human
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

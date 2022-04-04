@@ -16,7 +16,10 @@ public class BlackHole : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        GamePlayManager.BlackHoleEats(other);
+        if (!other.isTrigger)
+        {
+            GamePlayManager.BlackHoleEats(other);
+        }
     }
 
     void OnBlackHoleEats(Collider food, GamePlayData data)

@@ -11,9 +11,7 @@ public class UiManager : MonoBehaviour
     public TextMeshProUGUI blackHoleDescription;
 
     public GameObject humansContainer;
-
-    public Image currentWorld;
-
+    
     public Texture2D tex;
 
     private Camera _camera;

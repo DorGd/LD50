@@ -38,20 +38,21 @@ public class Planet : MonoBehaviour
             case GameState.Init:
                 if (_planetIndex == data.PlanetIndex)
                 {
-                    _rb.WakeUp();
+                    // _rb.WakeUp();
                     gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
                     GetComponent<Collider>().enabled = false;
+                    StartCoroutine(MagnetHumanity(true, 3f));
                 }
                 else if (_planetIndex - data.PlanetIndex == 1)
                 {
-                    _rb.WakeUp();
+                    // _rb.WakeUp();
                     gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
                     GetComponent<Collider>().enabled = true;
                 }
                 else
                 {
                     // Prevents Attraction.
-                    _rb.Sleep();
+                    // _rb.Sleep();
                 }
                 break;
             case GameState.Play:
@@ -66,10 +67,10 @@ public class Planet : MonoBehaviour
                 }
                 else if (_planetIndex - data.PlanetIndex == 1)
                 {
-                    _rb.WakeUp();
+                    // _rb.WakeUp();
                     gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
                     GetComponent<Collider>().enabled = true;
-
+                    StartCoroutine(MagnetHumanity(true, 5f));
                 }
                 else if (_planetIndex - data.PlanetIndex == -1)
                 {
@@ -77,7 +78,18 @@ public class Planet : MonoBehaviour
                     gameObject.transform.DOMove(_BlackHoleAnchore.position, 3f).SetEase(Ease.OutBounce).onComplete += () => Destroy(gameObject);
                 }
                 break;
+        }
+    }
 
+    private IEnumerator MagnetHumanity(bool magnetState, float duration = -1)
+    {
+        int factor = magnetState ? 1 : -1;
+        _rb.mass += factor * 100;
+
+        if (duration > 0)
+        {
+            yield return new WaitForSeconds(duration);
+            _rb.mass -= factor * 100;
         }
     }
 }
