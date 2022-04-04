@@ -23,7 +23,7 @@ public static class GamePlayManager
     
     private static GamePlayData _gameData;
     private static GameObject _human;
-    private const int HumanityInitSize = 100;
+    private const int HumanityInitSize = 1;
 
     public static void ChangeGameState(GameState state, Action onComplete = null)
     {

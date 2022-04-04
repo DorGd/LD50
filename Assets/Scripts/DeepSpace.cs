@@ -10,7 +10,7 @@ public class DeepSpace : MonoBehaviour
         if (other.gameObject.layer == LayerMask.NameToLayer("Human") && !other.isTrigger)
         {
             GamePlayManager.HumanFallToDeepSpace();
-            Destroy(other.gameObject);
+            Destroy(other.transform.parent.gameObject);
         }
     }
 }

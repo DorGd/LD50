@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
-
     [SerializeField] private Transform _currentPlanetAnchore;
     [SerializeField] private Transform _NextPlanetAnchore;
     [SerializeField] private Transform _BlackHoleAnchore;
@@ -17,6 +16,7 @@ public class Planet : MonoBehaviour
     private void Awake()
     {
         GamePlayManager.OnGameStateChange += OnGameStateChange;
+
         _rb = GetComponentInChildren<Rigidbody>();
         _safeHumans = new List<Rigidbody>();
 
@@ -39,67 +39,81 @@ public class Planet : MonoBehaviour
         switch (data.State)
         {
             case GameState.Init:
-                if (_planetIndex == data.PlanetIndex)
-                {
-                    gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
-                    GetComponent<Collider>().enabled = false;
-                }
-                else if (_planetIndex - data.PlanetIndex == 1)
-                {
-                    gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
-                    GetComponent<Collider>().enabled = true;
-                }
-                else
-                {
-                    // Prevents Attraction.
-                }
+                OnInit(data);
                 break;
             case GameState.Play:
                 break;
             case GameState.Pause:
                 break;
             case GameState.LevelTransition:
-                if (_planetIndex == data.PlanetIndex)
-                {
-                    foreach (var human in _safeHumans)
-                    {
-                        human.transform.parent.parent = transform;
-                        // human.isKinematic = false;
-                    }
-                    gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f).onComplete += (() =>
-                    {
-                        foreach (var human in _safeHumans)
-                        {
-                            human.transform.parent.parent = null;
-                            // human.isKinematic = false;
-                        }
-                        GamePlayManager.ChangeGameState(GameState.Play);
-                    });
-                    GetComponent<Collider>().enabled = false;
-                }
-                else if (_planetIndex - data.PlanetIndex == 1)
-                {
-                    gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
-                    GetComponent<Collider>().enabled = true;
-                }
-                else if (_planetIndex - data.PlanetIndex == -1)
-                {
-                    // For debug
-                    gameObject.transform.DOMove(_BlackHoleAnchore.position, 3f).SetEase(Ease.OutBounce).onComplete += () => Destroy(gameObject);
-                }
+                OnPlanetTransition(data);
+                break;
+            case GameState.Lose:
+                OnLose();
                 break;
         }
     }
 
-    private IEnumerator MagnetHumanity(bool magnetState, float duration = -1)
+    private void OnInit(GamePlayData data)
     {
-        int factor = magnetState ? 1 : -1;
-        _rb.mass += factor * 200;
-
-        if (duration > 0)
+        if (_planetIndex == data.PlanetIndex)
         {
-            yield return new WaitForSeconds(duration);
-            _rb.mass -= factor * 100;
+            gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
+            GetComponent<Collider>().enabled = false;
+        }
+        else if (_planetIndex - data.PlanetIndex == 1)
+        {
+            gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
+            GetComponent<Collider>().enabled = true;
+        }
+    }
+
+    private void OnLose()
+    {
+        KillPlanet();
+    }
+
+    private void KillPlanet()
+    {
+        if (_rb != null)
+        {
+            _rb.mass = 5;
+            _rb.isKinematic = false;
+            _rb.AddForce((_BlackHoleAnchore.position - transform.position) * 100);
+        }
+    }
+
+    private void OnPlanetTransition(GamePlayData data)
+    {
+        if (_planetIndex == data.PlanetIndex)
+        {
+            foreach (var human in _safeHumans)
+            {
+                if (human != null)
+                {
+                    human.transform.parent.parent = transform;
+                }
+            }
+
+            gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f).onComplete += (() =>
+            {
+                foreach (var human in _safeHumans)
+                {
+                    human.transform.parent.parent = null;
+                }
+
+                GamePlayManager.ChangeGameState(GameState.Play);
+            });
+            GetComponent<Collider>().enabled = false;
+        }
+        else if (_planetIndex - data.PlanetIndex == 1)
+        {
+            gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
+            GetComponent<Collider>().enabled = true;
+        }
+        else if (_planetIndex - data.PlanetIndex == -1)
+        {
+            KillPlanet();
         }
     }
 }

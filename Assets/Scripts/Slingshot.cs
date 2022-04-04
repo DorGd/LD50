@@ -62,6 +62,12 @@ public class Slingshot : MonoBehaviour
         
         if (_isPressed && Input.GetButton("Fire1"))
         {
+            if ( _selectedRigidBody.First() == null)
+            {
+                _isPressed = false;
+                _selectedRigidBody.Clear();
+                return;
+            }
             _currentPosition = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y,Mathf.Abs(_camera.transform.position.z - _selectedRigidBody.First().position.z)));
             var direction = _currentPosition - _originPosition;
             
@@ -72,7 +78,6 @@ public class Slingshot : MonoBehaviour
         
         if (_isPressed && Input.GetButtonUp("Fire1"))
         {
-            _isPressed = false;
             SlingHumanToSpace();
         }
     }
@@ -87,6 +92,7 @@ public class Slingshot : MonoBehaviour
                 rb.AddForce(-direction);
             }
         }
+        _isPressed = false;
         _selectedRigidBody.Clear();
     }
 }
