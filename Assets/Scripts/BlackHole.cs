@@ -28,6 +28,7 @@ public class BlackHole : MonoBehaviour
     void OnBlackHoleEats(Collider food, GamePlayData data)
     {
         Debug.Log($"Black Hole eats {food.transform.parent.name}");
+        SoundManager.Instance.RandomSoundEffect(SoundManager.Instance.BlackHoleSucktion);
         AbsorbFood(food, data);
     }
 

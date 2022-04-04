@@ -91,6 +91,15 @@ public class Slingshot : MonoBehaviour
             {
                 rb.AddForce(-direction);
             }
+
+            if (rb.velocity.magnitude > 3)
+            {
+                SoundManager.Instance.RandomSoundEffect(SoundManager.Instance.HumanScreams);
+            }
+            else
+            {
+                Debug.Log($"Velocity = {rb.velocity.magnitude}");   
+            }
         }
         _isPressed = false;
         _selectedRigidBody.Clear();

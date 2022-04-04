@@ -13,4 +13,9 @@ public class DeepSpace : MonoBehaviour
             Destroy(other.transform.parent.gameObject);
         }
     }
+
+    public void Exit()
+    {
+        Application.Quit();
+    }
 }

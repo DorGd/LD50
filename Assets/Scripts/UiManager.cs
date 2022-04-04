@@ -1,9 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
@@ -11,6 +11,8 @@ public class UiManager : MonoBehaviour
     public TextMeshProUGUI blackHoleDescription;
 
     public GameObject humansContainer;
+
+    public GameObject win;
     
     public Texture2D tex;
 
@@ -64,9 +66,23 @@ public class UiManager : MonoBehaviour
                 ChangeDescription();
                 ChangePlanetImage();
                 break;
+            case GameState.Win:
+                DOTween.To(() => _camera.fieldOfView, x => _camera.fieldOfView = x, 179, 3).SetEase(Ease.InBack).onComplete += () => win.SetActive(true);
+                break;
+            case GameState.Lose:
+
+                StartCoroutine(nameof(Lose));
+                break;
         }
     }
 
+    public IEnumerator Lose()
+    {
+        yield return new WaitForSeconds(5f);
+        SoundManager.Instance.PlayMusic(SoundManager.Instance.OpeningMusic);
+        SceneManager.LoadScene(0);
+    }
+    
     private void Init(int humansCount)
     {
         DOTween.To(() => _camera.fieldOfView, x => _camera.fieldOfView = x, 60, 3).SetEase(Ease.OutBack);

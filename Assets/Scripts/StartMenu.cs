@@ -16,10 +16,7 @@ public class StartMenu : MonoBehaviour
     private void Awake()
     {
         _camera = Camera.main;
-        // Sequence seq = DOTween.Sequence();
-        // seq.Append(bg.DOFade(0.5f, 1.5f).SetEase(Ease.InSine));
-        // seq.Append(bg.DOFade(1f, 1.5f).SetEase(Ease.OutSine));
-        // seq.Play().SetLoops(-1);
+        SoundManager.Instance.PlayMusic(SoundManager.Instance.OpeningMusic);
     }
 
     public void StartGame()
