@@ -1,7 +1,6 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using Object = System.Object;
 
 public enum GameState
 {
@@ -24,7 +23,7 @@ public static class GamePlayManager
     
     private static GamePlayData _gameData;
     private static GameObject _human;
-    private const int HumanityInitSize = 10;
+    private const int HumanityInitSize = 100;
 
     public static void ChangeGameState(GameState state, Action onComplete = null)
     {
@@ -76,7 +75,8 @@ public static class GamePlayManager
         var human = Resources.Load<GameObject>("Prefabs/Human");
         for (int i = 0; i < HumanityInitSize; i++)
         {
-            var position = planet.transform.position + Quaternion.AngleAxis( Mathf.Rad2Deg * 2 * Mathf.PI * (i / 10f), Vector3.forward) * Vector3.up * (planet.transform.localScale.x + human.transform.localScale.x);
+            var position = planet.transform.position + Quaternion.AngleAxis( Mathf.Rad2Deg * 2 * Mathf.PI * ((float) (i % 25) / 25), Vector3.forward) *
+                Vector3.up * (planet.transform.localScale.x + - (human.transform.localScale.x * Mathf.Floor( (float) i / 25)));
             UnityEngine.Object.Instantiate(human, position, Quaternion.identity);
         }
         

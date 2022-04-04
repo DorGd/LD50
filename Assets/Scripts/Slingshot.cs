@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,18 +15,19 @@ public class Slingshot : MonoBehaviour
     
     private bool _isPressed;
 
-    private Rigidbody _selectedRigidBody;
+    private List<Rigidbody> _selectedRigidBody;
 
     private Camera _camera;
 
     private void Awake()
     {
         _camera = Camera.main;
+        _selectedRigidBody = new List<Rigidbody>();
     }
 
     private float AngleBetweenTwoPoints()
     {
-        Vector2 positionOnScreen = _selectedRigidBody.position;
+        Vector2 positionOnScreen = _selectedRigidBody.First().position;
         
         Vector2 mouseOnScreen = _currentPosition;
         
@@ -38,14 +41,20 @@ public class Slingshot : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             Ray ray = _camera.ScreenPointToRay(mousePos);
-        
-            if (Physics.Raycast(ray, out var hit))
-            {
-                _selectedRigidBody = hit.rigidbody;
-                
-                _originPosition = hit.transform.position;
 
+            var hit = Physics.RaycastAll(ray);
+            if (hit.Length > 0)
+            {
+                _originPosition = hit[0].transform.position;
                 transform.position = _originPosition;
+                
+                foreach (var t in hit)
+                {
+                    if (t.rigidbody != null)
+                    {
+                        _selectedRigidBody.Add(t.rigidbody);
+                    }
+                }
                 
                 _isPressed = true;
             }
@@ -53,7 +62,7 @@ public class Slingshot : MonoBehaviour
         
         if (_isPressed && Input.GetButton("Fire1"))
         {
-            _currentPosition = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y,Mathf.Abs(_camera.transform.position.z - _selectedRigidBody.position.z)));
+            _currentPosition = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y,Mathf.Abs(_camera.transform.position.z - _selectedRigidBody.First().position.z)));
             var direction = _currentPosition - _originPosition;
             
             transform.rotation =  Quaternion.Euler (new Vector3(0f,0f,AngleBetweenTwoPoints()));
@@ -71,7 +80,13 @@ public class Slingshot : MonoBehaviour
     private void SlingHumanToSpace()
     {
         var direction = (_currentPosition - _originPosition) * multiplier;
-        
-        _selectedRigidBody.AddForce(-direction);
+        foreach (var rb in _selectedRigidBody)
+        {
+            if (rb != null)
+            {
+                rb.AddForce(-direction);
+            }
+        }
+        _selectedRigidBody.Clear();
     }
 }
