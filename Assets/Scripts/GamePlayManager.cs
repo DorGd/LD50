@@ -74,7 +74,7 @@ public static class GamePlayManager
         
         var planet = GameObject.Find("Planet_0");
         var human = Resources.Load<GameObject>("Prefabs/Human");
-        for (int i = 1; i < HumanityInitSize; i++)
+        for (int i = 0; i < HumanityInitSize; i++)
         {
             var position = planet.transform.position + Quaternion.AngleAxis( Mathf.Rad2Deg * 2 * Mathf.PI * (i / 10f), Vector3.forward) * Vector3.up * (planet.transform.localScale.x + human.transform.localScale.x);
             UnityEngine.Object.Instantiate(human, position, Quaternion.identity);
@@ -131,6 +131,8 @@ public static class GamePlayManager
     {
         _gameData.LiveHumens--;
         OnHumanFallToDeepSpace?.Invoke();
+        var isDoomed = CheckHumanityDoomed();
+        if (!isDoomed) CheckHumanitySafe();
     }
     
     public static void BlackHoleEats(Collider food)
@@ -140,15 +142,19 @@ public static class GamePlayManager
             _gameData.LiveHumens--;
         }
         OnBlackHoleEats?.Invoke(food, _gameData);
-        CheckHumanityDoomed();
+        var isDoomed = CheckHumanityDoomed();
+        if (!isDoomed) CheckHumanitySafe();
     }
 
-    private static void CheckHumanityDoomed()
+    private static bool CheckHumanityDoomed()
     {
         if (_gameData.LiveHumens == 0)
         {
             ChangeGameState(GameState.Lose);
+            return true;
         }
+
+        return false;
     }
 
     private static void CheckHumanitySafe()

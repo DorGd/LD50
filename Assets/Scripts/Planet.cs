@@ -13,10 +13,12 @@ public class Planet : MonoBehaviour
     [SerializeField] private int _planetIndex;
     
     private Rigidbody _rb;
+    private List<Rigidbody> _safeHumans;
     private void Awake()
     {
         GamePlayManager.OnGameStateChange += OnGameStateChange;
         _rb = GetComponentInChildren<Rigidbody>();
+        _safeHumans = new List<Rigidbody>();
 
         if (_rb == null)
         {
@@ -28,6 +30,7 @@ public class Planet : MonoBehaviour
     {
         if (!other.GetComponent<AttractorTarget>() || other.isTrigger) return;
         Debug.Log("HumanEnteredSafePlanet -> " + gameObject.name);
+        _safeHumans.Add(other.attachedRigidbody);
         GamePlayManager.HumanEnteredSafePlanet();
     }
 
@@ -38,21 +41,17 @@ public class Planet : MonoBehaviour
             case GameState.Init:
                 if (_planetIndex == data.PlanetIndex)
                 {
-                    // _rb.WakeUp();
                     gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
                     GetComponent<Collider>().enabled = false;
-                    StartCoroutine(MagnetHumanity(true, 3f));
                 }
                 else if (_planetIndex - data.PlanetIndex == 1)
                 {
-                    // _rb.WakeUp();
                     gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
                     GetComponent<Collider>().enabled = true;
                 }
                 else
                 {
                     // Prevents Attraction.
-                    // _rb.Sleep();
                 }
                 break;
             case GameState.Play:
@@ -62,15 +61,26 @@ public class Planet : MonoBehaviour
             case GameState.LevelTransition:
                 if (_planetIndex == data.PlanetIndex)
                 {
-                    gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f).onComplete += (() => GamePlayManager.ChangeGameState(GameState.Play));
+                    foreach (var human in _safeHumans)
+                    {
+                        human.transform.parent.parent = transform;
+                        // human.isKinematic = false;
+                    }
+                    gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f).onComplete += (() =>
+                    {
+                        foreach (var human in _safeHumans)
+                        {
+                            human.transform.parent.parent = null;
+                            // human.isKinematic = false;
+                        }
+                        GamePlayManager.ChangeGameState(GameState.Play);
+                    });
                     GetComponent<Collider>().enabled = false;
                 }
                 else if (_planetIndex - data.PlanetIndex == 1)
                 {
-                    // _rb.WakeUp();
                     gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
                     GetComponent<Collider>().enabled = true;
-                    StartCoroutine(MagnetHumanity(true, 5f));
                 }
                 else if (_planetIndex - data.PlanetIndex == -1)
                 {
@@ -84,7 +94,7 @@ public class Planet : MonoBehaviour
     private IEnumerator MagnetHumanity(bool magnetState, float duration = -1)
     {
         int factor = magnetState ? 1 : -1;
-        _rb.mass += factor * 100;
+        _rb.mass += factor * 200;
 
         if (duration > 0)
         {
