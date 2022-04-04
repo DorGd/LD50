@@ -8,7 +8,10 @@ public class BlackHole : MonoBehaviour
     
     [SerializeField]
     private Rigidbody rb;
-
+    
+    private const int maxScale = 82;
+    private const int maxMass = 160;
+    
     private void Awake()
     {
         GamePlayManager.OnBlackHoleEats += OnBlackHoleEats;
@@ -31,7 +34,7 @@ public class BlackHole : MonoBehaviour
     private void AbsorbFood(Collider food, GamePlayData data)
     {
         float foodMass = food.attachedRigidbody.mass;
-        rb.mass += foodMass * 10;
+        rb.mass += foodMass;
         transform.localScale += Vector3.one * foodMass;
         data.BlackHoleMass = rb.mass;
         Destroy(food.transform.parent.gameObject);

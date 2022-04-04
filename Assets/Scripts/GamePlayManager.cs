@@ -23,7 +23,7 @@ public static class GamePlayManager
     
     private static GamePlayData _gameData;
     private static GameObject _human;
-    private const int HumanityInitSize = 1;
+    private const int HumanityInitSize = 100;
 
     public static void ChangeGameState(GameState state, Action onComplete = null)
     {
@@ -60,6 +60,7 @@ public static class GamePlayManager
         OnGameStateChange?.Invoke(_gameData);
         Debug.Log($"Chane Game State to: {state}");
         onComplete?.Invoke();
+        CheckHumanityWillBurn();
     }
 
     static void OnInit()
@@ -120,10 +121,18 @@ public static class GamePlayManager
         _gameData.State = GameState.Exit;
     }
 
-    public static void HumanEnteredSafePlanet()
+    public static void HumanEnteredSafePlanet(bool isExit = false)
     {
-        _gameData.SafeHumans++;
+        if (isExit)
+        {
+            _gameData.SafeHumans--;    
+        }
+        else
+        {
+            _gameData.SafeHumans++;
+        }
         OnHumanEnteredSafePlanet?.Invoke(_gameData);
+        _gameData.Print();
         CheckHumanitySafe();
     }
 
@@ -131,6 +140,7 @@ public static class GamePlayManager
     {
         _gameData.LiveHumens--;
         OnHumanFallToDeepSpace?.Invoke();
+        _gameData.Print();
         var isDoomed = CheckHumanityDoomed();
         if (!isDoomed) CheckHumanitySafe();
     }
@@ -139,6 +149,7 @@ public static class GamePlayManager
     {
         if (food.gameObject.layer == LayerMask.NameToLayer("Human"))
         {
+            _gameData.Print();
             _gameData.LiveHumens--;
         }
         OnBlackHoleEats?.Invoke(food, _gameData);
@@ -159,9 +170,18 @@ public static class GamePlayManager
 
     private static void CheckHumanitySafe()
     {
-        if (_gameData.LiveHumens == _gameData.SafeHumans)
+        if (_gameData.LiveHumens <= _gameData.SafeHumans)
         {
-            ChangeGameState(GameState.LevelTransition);
+            ChangeGameState(GameState.LevelTransition, () => ChangeGameState(GameState.Play));
         }
+    }
+
+    private static void CheckHumanityWillBurn()
+    {
+        if (_gameData.PlanetIndex == 3)
+        {
+            ChangeGameState(GameState.Win);
+        }
+
     }
 }

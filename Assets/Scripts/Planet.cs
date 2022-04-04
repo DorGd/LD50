@@ -29,9 +29,15 @@ public class Planet : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.GetComponent<AttractorTarget>() || other.isTrigger) return;
-        Debug.Log("HumanEnteredSafePlanet -> " + gameObject.name);
         _safeHumans.Add(other.attachedRigidbody);
         GamePlayManager.HumanEnteredSafePlanet();
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.GetComponent<AttractorTarget>() || other.isTrigger) return;
+        _safeHumans.Remove(other.attachedRigidbody);
+        GamePlayManager.HumanEnteredSafePlanet(true);
     }
 
     private void OnGameStateChange(GamePlayData data)
@@ -87,6 +93,7 @@ public class Planet : MonoBehaviour
     {
         if (_planetIndex == data.PlanetIndex)
         {
+            _rb.mass = 5;
             foreach (var human in _safeHumans)
             {
                 if (human != null)
