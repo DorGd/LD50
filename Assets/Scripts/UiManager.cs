@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,8 +28,8 @@ public class UiManager : MonoBehaviour
         "Lemon Tree",
         "Canada",
         "Earth",
+        "Sun",
         "Will Smith Slap",
-        "Your Fat Mama",
         "Oblivion * Doom * You're screwed"
     };
 
@@ -40,6 +41,7 @@ public class UiManager : MonoBehaviour
         
         GamePlayManager.OnGameStateChange += OnGameStateChange;
         GamePlayManager.OnBlackHoleEats += OnBlackHoleEats;
+        GamePlayManager.OnHumanFallToDeepSpace += OnHumanFallToDeepSpace;
     }
 
     private void OnBlackHoleEats(Collider food, GamePlayData data)
@@ -48,6 +50,11 @@ public class UiManager : MonoBehaviour
         {
             AbortHuman();
         }
+    }
+    
+    private void OnHumanFallToDeepSpace()
+    {
+        AbortHuman();
     }
 
     private void OnGameStateChange(GamePlayData data)
@@ -105,7 +112,7 @@ public class UiManager : MonoBehaviour
 
             _humansCreated.Remove(human);
             
-            Destroy(human);
+            human.transform.DOScale(Vector3.zero, 1.5f).SetEase(Ease.InOutBounce).onComplete += () => Destroy(human);
         }
     }
     

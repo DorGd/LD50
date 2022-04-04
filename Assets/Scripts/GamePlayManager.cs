@@ -19,6 +19,7 @@ public static class GamePlayManager
     public static event Action<GamePlayData> OnGameStateChange;
     public static event Action<GamePlayData> OnHumanEnteredSafePlanet;
     public static event Action<Collider, GamePlayData> OnBlackHoleEats;
+    public static event Action OnHumanFallToDeepSpace;
     
     private static GamePlayData _gameData;
     private static GameObject _human;
@@ -115,6 +116,12 @@ public static class GamePlayManager
         _gameData.SafeHumans++;
         OnHumanEnteredSafePlanet?.Invoke(_gameData);
         CheckHumanitySafe();
+    }
+
+    public static void HumanFallToDeepSpace()
+    {
+        _gameData.LiveHumens--;
+        OnHumanFallToDeepSpace?.Invoke();
     }
     
     public static void BlackHoleEats(Collider food)
