@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.0031562946, g: 0.002732728, b: 0.003365626, a: 1}
+  m_IndirectSpecularColor: {r: 0.003103807, g: 0.0027302764, b: 0.0033076787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -232,6 +232,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 671422767703152443, guid: 6551966375c05b546b9b793a73e0f412,
+        type: 3}
+      propertyPath: m_Mass
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 671422768685182100, guid: 6551966375c05b546b9b793a73e0f412,
         type: 3}
       propertyPath: m_Name
@@ -346,6 +351,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 671422767703152443, guid: 6551966375c05b546b9b793a73e0f412,
+        type: 3}
+      propertyPath: m_Mass
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 671422768685182100, guid: 6551966375c05b546b9b793a73e0f412,
         type: 3}
@@ -604,7 +614,7 @@ GameObject:
   - component: {fileID: 355683220}
   - component: {fileID: 355683219}
   - component: {fileID: 355683221}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: DeepSpace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
