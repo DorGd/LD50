@@ -8,8 +8,6 @@ using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
-    public static UiManager Instance { get; private set; }
-    
     public TextMeshProUGUI blackHoleDescription;
 
     public GameObject humansContainer;
@@ -17,6 +15,8 @@ public class UiManager : MonoBehaviour
     public Image currentWorld;
 
     public Texture2D tex;
+
+    private Camera _camera;
 
     private int _currentDescriptionIndex = -1;
 
@@ -35,10 +35,8 @@ public class UiManager : MonoBehaviour
 
     protected void Awake()
     {
-        Instance = this;
-
         _humansCreated = new List<GameObject>();
-        
+        _camera = Camera.main;
         GamePlayManager.OnGameStateChange += OnGameStateChange;
         GamePlayManager.OnBlackHoleEats += OnBlackHoleEats;
         GamePlayManager.OnHumanFallToDeepSpace += OnHumanFallToDeepSpace;
@@ -73,6 +71,8 @@ public class UiManager : MonoBehaviour
 
     private void Init(int humansCount)
     {
+        DOTween.To(() => _camera.fieldOfView, x => _camera.fieldOfView = x, 60, 3).SetEase(Ease.OutBack);
+
         ChangeDescription();
         
         CreateHumans(humansCount);
@@ -112,7 +112,7 @@ public class UiManager : MonoBehaviour
 
             _humansCreated.Remove(human);
             
-            human.transform.DOScale(Vector3.zero, 1.5f).SetEase(Ease.InOutBounce).onComplete += () => Destroy(human);
+            human.transform.DOScale(Vector3.zero, 1.5f).SetEase(Ease.InBack).onComplete += () => Destroy(human);
         }
     }
     
