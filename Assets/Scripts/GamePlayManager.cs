@@ -65,7 +65,7 @@ public static class GamePlayManager
 
     static void OnInit()
     {
-        _gameData = AssetDatabase.LoadAssetAtPath<GamePlayData>("Assets/ScriptableObjects/GameData.asset");
+        _gameData = Resources.Load<GamePlayData>("ScriptableObjects/GameData");
         if (_gameData == null)
         {
             Debug.LogError("Can't find GameData, please check path is correct.");

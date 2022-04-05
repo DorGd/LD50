@@ -66,6 +66,7 @@ public class Planet : MonoBehaviour
         {
             gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
             GetComponent<Collider>().enabled = false;
+            StartCoroutine(nameof(PlanetTick));
         }
         else if (_planetIndex - data.PlanetIndex == 1)
         {
@@ -73,6 +74,17 @@ public class Planet : MonoBehaviour
             GetComponent<Collider>().enabled = true;
         }
     }
+
+    private IEnumerator PlanetTick()
+    {
+        while (_rb.mass > 1)
+        {
+            _rb.mass -= 0.25f;
+            yield return new WaitForSeconds(5f);
+        }
+        KillPlanet();
+    }
+    
 
     private void OnLose()
     {
@@ -85,7 +97,7 @@ public class Planet : MonoBehaviour
         {
             _rb.mass = 5;
             _rb.isKinematic = false;
-            _rb.AddForce((_BlackHoleAnchore.position - transform.position) * 100);
+            _rb.AddForce((_BlackHoleAnchore.position - transform.position) * 200);
         }
     }
 
@@ -108,7 +120,8 @@ public class Planet : MonoBehaviour
                 {
                     human.transform.parent.parent = null;
                 }
-
+                
+                StartCoroutine(nameof(PlanetTick));
                 GamePlayManager.ChangeGameState(GameState.Play);
             });
             GetComponent<Collider>().enabled = false;
