@@ -10,6 +10,7 @@ public class Planet : MonoBehaviour
     [SerializeField] private Transform _NextPlanetAnchore;
     [SerializeField] private Transform _BlackHoleAnchore;
     [SerializeField] private int _planetIndex;
+    [SerializeField] private Collider _collider;
     
     private Rigidbody _rb;
     private List<Rigidbody> _safeHumans;
@@ -25,7 +26,12 @@ public class Planet : MonoBehaviour
             Debug.LogError($"{gameObject.name} can't find rigid body!");
         }
     }
-    
+
+    private void OnDisable()
+    {
+        GamePlayManager.OnGameStateChange -= OnGameStateChange;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.GetComponent<AttractorTarget>() || other.isTrigger) return;
@@ -62,16 +68,18 @@ public class Planet : MonoBehaviour
 
     private void OnInit(GamePlayData data)
     {
+        if (data == null)
+        {
+            return;
+        }
         if (_planetIndex == data.PlanetIndex)
         {
-            gameObject.transform.DOMove(_currentPlanetAnchore.position, 5f);
-            GetComponent<Collider>().enabled = false;
+            _collider.enabled = false;
             StartCoroutine(nameof(PlanetTick));
         }
         else if (_planetIndex - data.PlanetIndex == 1)
         {
-            gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
-            GetComponent<Collider>().enabled = true;
+            _collider.enabled = true;
         }
     }
 
@@ -124,12 +132,12 @@ public class Planet : MonoBehaviour
                 StartCoroutine(nameof(PlanetTick));
                 GamePlayManager.ChangeGameState(GameState.Play);
             });
-            GetComponent<Collider>().enabled = false;
+            _collider.enabled = false;
         }
         else if (_planetIndex - data.PlanetIndex == 1)
         {
             gameObject.transform.DOMove(_NextPlanetAnchore.position, 5f);
-            GetComponent<Collider>().enabled = true;
+            _collider.enabled = true;
         }
         else if (_planetIndex - data.PlanetIndex == -1)
         {

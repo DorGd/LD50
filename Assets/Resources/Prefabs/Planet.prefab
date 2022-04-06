@@ -216,7 +216,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentPlanetAnchore: {fileID: 0}
   _NextPlanetAnchore: {fileID: 0}
+  _BlackHoleAnchore: {fileID: 0}
   _planetIndex: 2
+  _collider: {fileID: 5884102011640253978}
 --- !u!135 &5884102011640253978
 SphereCollider:
   m_ObjectHideFlags: 0

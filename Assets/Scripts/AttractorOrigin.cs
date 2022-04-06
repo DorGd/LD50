@@ -9,7 +9,7 @@ public class AttractorOrigin : Attractor
     
     void FixedUpdate ()
     {
-        if (updatedCount % updateInterval == 0)
+        if (updatedCount % updateInterval == 0 && Attractors != null)
         {
             // Make sure there are humans in scene!
             foreach (Attractor attractor in Attractors)

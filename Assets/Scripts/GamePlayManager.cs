@@ -132,7 +132,6 @@ public static class GamePlayManager
             _gameData.SafeHumans++;
         }
         OnHumanEnteredSafePlanet?.Invoke(_gameData);
-        _gameData.Print();
         CheckHumanitySafe();
     }
 
@@ -149,7 +148,6 @@ public static class GamePlayManager
     {
         if (food.gameObject.layer == LayerMask.NameToLayer("Human"))
         {
-            _gameData.Print();
             _gameData.LiveHumens--;
         }
         OnBlackHoleEats?.Invoke(food, _gameData);
@@ -178,7 +176,7 @@ public static class GamePlayManager
 
     private static void CheckHumanityWillBurn()
     {
-        if (_gameData.PlanetIndex == 3)
+        if (_gameData.PlanetIndex == 4)
         {
             ChangeGameState(GameState.Win);
         }

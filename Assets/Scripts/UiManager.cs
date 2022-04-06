@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -42,6 +43,13 @@ public class UiManager : MonoBehaviour
         GamePlayManager.OnHumanFallToDeepSpace += OnHumanFallToDeepSpace;
     }
 
+    private void OnDisable()
+    {
+        GamePlayManager.OnGameStateChange -= OnGameStateChange;
+        GamePlayManager.OnBlackHoleEats -= OnBlackHoleEats;
+        GamePlayManager.OnHumanFallToDeepSpace -= OnHumanFallToDeepSpace;
+    }
+
     private void OnBlackHoleEats(Collider food, GamePlayData data)
     {
         if (food.gameObject.layer == LayerMask.NameToLayer("Human"))
@@ -70,7 +78,6 @@ public class UiManager : MonoBehaviour
                 DOTween.To(() => _camera.fieldOfView, x => _camera.fieldOfView = x, 179, 3).SetEase(Ease.InBack).onComplete += () => win.SetActive(true);
                 break;
             case GameState.Lose:
-
                 StartCoroutine(nameof(Lose));
                 break;
         }
@@ -79,7 +86,6 @@ public class UiManager : MonoBehaviour
     public IEnumerator Lose()
     {
         yield return new WaitForSeconds(5f);
-        SoundManager.Instance.PlayMusic(SoundManager.Instance.OpeningMusic);
         SceneManager.LoadScene(0);
     }
     
